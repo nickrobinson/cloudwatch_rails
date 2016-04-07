@@ -1,7 +1,6 @@
 require 'thread'
 require 'cloudwatch_rails/cloudwatch_helper'
 require 'cloudwatch_rails/config'
-require 'byebug'
 
 module CloudwatchRails
   class AsyncQueue

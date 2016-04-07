@@ -1,6 +1,5 @@
 require 'aws-sdk'
 require 'cloudwatch_rails/config'
-require 'byebug'
 
 module CloudwatchRails
   class CloudwatchHelper
