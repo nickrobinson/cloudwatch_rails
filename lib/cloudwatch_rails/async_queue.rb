@@ -1,10 +1,14 @@
 require 'thread'
+require 'cloudwatch_rails/cloudwatch_helper'
+require 'cloudwatch_rails/config'
+require 'byebug'
 
 module CloudwatchRails
   class AsyncQueue
-    attr_reader :consumer, :queue
+    attr_reader :consumer, :queue, :cloudwatch_helper
 
     def initialize
+      @cloudwatch_helper = CloudwatchRails::CloudwatchHelper.new
       @queue = Queue.new
       @consumer = Thread.new do
         loop do
@@ -13,7 +17,12 @@ module CloudwatchRails
           method_name = msg.first
           args = msg.last
 
-          collector.__send__ method_name, *args
+          Rails.logger.warn("Method: #{method_name} Args: #{args}")
+          args[:metrics].each do |key, value|
+            cloudwatch_helper.put_process_action_metric(args[:controller], args[:action], key, value)
+          end
+
+          # collector.__send__ method_name, *args
         end
       end
     end

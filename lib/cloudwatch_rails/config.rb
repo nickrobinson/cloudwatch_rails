@@ -38,6 +38,14 @@ module CloudwatchRails
           @root_path.nil? ? nil : File.join(@root_path, 'config', 'cloudwatch_rails.yml')
     end
 
+    def metric_namespace
+      @metric_namespace ||= "#{Rails.application.class.parent_name}-#{Rails.env}"
+    end
+
+    def aws_region
+      @aws_region ||= @config_hash[:region]
+    end
+
     def load_from_disk
       configurations = YAML.load_file(config_file)
       config_for_this_env = configurations[env]
