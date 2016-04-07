@@ -1,8 +1,8 @@
 # CloudwatchRails
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/cloudwatch_rails`. To experiment with that code, run `bin/console` for an interactive prompt.
+[![Circle CI](https://circleci.com/gh/nickrobinson/cloudwatch_rails.svg?style=svg)](https://circleci.com/gh/nickrobinson/cloudwatch_rails)
 
-TODO: Delete this and the text above, and describe your gem
+This Gem provides insight into your Rails application by sending metrics for each controller to AWS CloudWatch
 
 ## Installation
 
