@@ -1,3 +1,3 @@
 module CloudwatchRails
-  VERSION = "0.1.0aplha"
+  VERSION = "0.1.0beta"
 end
