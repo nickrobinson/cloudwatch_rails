@@ -28,6 +28,10 @@ class MockCloudwatchRailsConfig < CloudwatchRails::Config
   end
 end
 
+class Rails
+
+end
+
 describe MockCloudwatchRailsConfig do
   it 'has an AWS region member function' do
     config = MockCloudwatchRailsConfig.new
@@ -37,5 +41,12 @@ describe MockCloudwatchRailsConfig do
   it 'has ability to override AWS region' do
     config = MockCloudwatchRailsConfig.new(initial_config={region: 'us-west-1'})
     expect(config.aws_region).to eq('us-west-1')
+  end
+
+  it 'Returns the correct Metric Namespace' do
+    Rails.stub_chain("application.class.parent_name").and_return("Test")
+    Rails.stub(:env).and_return("rspec")
+    config = MockCloudwatchRailsConfig.new
+    expect(config.metric_namespace).to eq('Test-rspec')
   end
 end
