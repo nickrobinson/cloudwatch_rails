@@ -46,6 +46,10 @@ module CloudwatchRails
       @aws_region ||= @config_hash[:region]
     end
 
+    def custom_metrics
+      @custom_metrics ||= @config_hash[:custom_metrics]
+    end
+
     def load_from_disk
       configurations = YAML.load_file(config_file)
       config_for_this_env = configurations[env]

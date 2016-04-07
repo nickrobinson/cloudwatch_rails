@@ -24,5 +24,15 @@ module CloudwatchRails
         end
       end
     end
+
+    initializer 'cloudwatch_rails.custom' do
+      if CloudwatchRails.config.custom_metrics
+        ActiveSupport::Notifications.subscribe /cloudwatch_rails/ do |*args|
+          event = ActiveSupport::Notifications::Event.new(*args)
+
+          Rails.logger.warn("#{event.name}: #{event.duration}")
+        end
+      end
+    end
   end
 end
