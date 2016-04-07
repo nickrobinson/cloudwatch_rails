@@ -1,7 +1,7 @@
 require 'cloudwatch_rails/version'
 require 'cloudwatch_rails/railtie' if defined?(Rails)
 require 'cloudwatch_rails/config'
-require 'cloudwatch_rails/async_queue' if defined?(Rails)
+require 'cloudwatch_rails/async_queue'
 
 module CloudwatchRails
   class CollectorConfig
