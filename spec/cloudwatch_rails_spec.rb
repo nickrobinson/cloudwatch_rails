@@ -44,7 +44,7 @@ describe MockCloudwatchRailsConfig do
   end
 
   it 'Returns the correct Metric Namespace' do
-    Rails.stub_chain("application.class.parent_name").and_return("Test")
+    Rails.stub_chain('application.class.parent_name').and_return('Test')
     Rails.stub(:env).and_return("rspec")
     config = MockCloudwatchRailsConfig.new
     expect(config.metric_namespace).to eq('Test-rspec')

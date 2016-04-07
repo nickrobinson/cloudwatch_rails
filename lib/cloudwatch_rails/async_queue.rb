@@ -17,9 +17,14 @@ module CloudwatchRails
           args = msg.last
 
           Rails.logger.warn("Method: #{method_name} Args: #{args}")
-          args[:metrics].each do |key, value|
-            cloudwatch_helper.put_process_action_metric(args[:controller], args[:action], key, value)
+          if method_name == 'process_action'
+            args[:metrics].each do |key, value|
+              cloudwatch_helper.put_process_action_metric(args[:controller], args[:action], key, value)
+            end
+          elsif method_name == 'custom'
+            cloudwatch_helper.put_custom_metric(args[:name], args[:value], args[:unit])
           end
+
 
           # collector.__send__ method_name, *args
         end

@@ -25,12 +25,23 @@ module CloudwatchRails
       end
     end
 
+    initializer 'cloudwatch_rails.sql' do
+      ActiveSupport::Notifications.subscribe 'sql.active_record' do |*args|
+        event = ActiveSupport::Notifications::Event.new(*args)
+        Rails.logger.warn("Event: #{event.name} Duration: #{event.duration} Name: #{event.payload[:name]}")
+      end
+    end
+
     initializer 'cloudwatch_rails.custom' do
+      Rails.logger.warn(CloudwatchRails.config.custom_metrics)
       if CloudwatchRails.config.custom_metrics
         ActiveSupport::Notifications.subscribe /cloudwatch_rails/ do |*args|
           event = ActiveSupport::Notifications::Event.new(*args)
 
-          Rails.logger.warn("#{event.name}: #{event.duration}")
+          metric = {name: event.name.split('.')[1], value: event.duration, unit: event.payload[:unit]}
+
+          CloudwatchRails.collector_config.queue.push ['custom', metric]
+          Rails.logger.warn(metric)
         end
       end
     end
