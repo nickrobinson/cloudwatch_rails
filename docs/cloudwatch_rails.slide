@@ -1,0 +1,60 @@
+CloudWatch Rails (2016 Hackathon)
+08 Apr 2016
+Tags: rails ruby
+
+Nick Robinson
+nickrobi@
+
+* Problem
+
+AWS Customer options for Rails APM:
+
+- Roll their own solution
+- Use NewRelic, AppSignal, etc... (Seperate console for monitoring their application vs HW)
+- Pull Rails logs to CW Logs and try to build their own application metric based on log entries
+
+.image http://i.imgur.com/qOc6r9L.gif
+* Solution
+
+- Vend Ruby gem to do legwork for our customers!
+- Provide configuration mechanism per environment
+- Provide mechanism to capture custom metrics
+
+    default:
+      debug: false
+      region: "us-east-1"
+      custom_metrics: false
+
+    development:
+      debug: true
+      region: "us-east-1"
+      custom_metrics: true
+      whitelisted_controllers:
+        - all
+
+    production:
+      whitelisted_controllers:
+        - articles
+        - welcome
+
+* Underlying Magic
+
+- Active Support Instrumentation
+- YAML Config
+- Async Queue
+
+    if CloudwatchRails.config.custom_metrics
+        ActiveSupport::Notifications.subscribe /cloudwatch_rails/ do |*args|
+          event = ActiveSupport::Notifications::Event.new(*args)
+
+          metric = {name: event.name.split('.')[1], value: event.duration, unit: event.payload[:unit]}
+
+          CloudwatchRails.collector_config.queue.push ['custom', metric]
+        end
+    end
+
+* Future Work
+
+- Option to automatically append data to logs for easy CloudWatch Logs Integration
+- Options to collect data for sidekiq, mongo, and other popular Rails components
+- Add exception middleware to capture metrics on errors

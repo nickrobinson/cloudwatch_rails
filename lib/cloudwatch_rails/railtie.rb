@@ -14,7 +14,7 @@ module CloudwatchRails
               :action => event.payload[:action],
               :controller => event.payload[:controller],
               :metrics => {
-                  :page_duration => event.duration / 1000,
+                  :page_duration => event.duration,
                   :view_runtime => event.payload[:view_runtime],
                   :db_runtime => event.payload[:db_runtime]
               }
@@ -33,7 +33,6 @@ module CloudwatchRails
     end
 
     initializer 'cloudwatch_rails.custom' do
-      Rails.logger.warn(CloudwatchRails.config.custom_metrics)
       if CloudwatchRails.config.custom_metrics
         ActiveSupport::Notifications.subscribe /cloudwatch_rails/ do |*args|
           event = ActiveSupport::Notifications::Event.new(*args)
@@ -41,7 +40,6 @@ module CloudwatchRails
           metric = {name: event.name.split('.')[1], value: event.duration, unit: event.payload[:unit]}
 
           CloudwatchRails.collector_config.queue.push ['custom', metric]
-          Rails.logger.warn(metric)
         end
       end
     end
